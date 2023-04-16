@@ -5,6 +5,10 @@ use App\Http\Controllers\UserlistController;
 use App\Http\Controllers\AutorepliesController;
 use App\Http\Controllers\UsercampaignsController;
 use App\Http\Controllers\UserAccountController;
+use App\Http\Controllers\FrontendController;
+
+
+use App\Http\Controllers\StripePaymentController;
 
 
 /*
@@ -19,12 +23,23 @@ use App\Http\Controllers\UserAccountController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('welcome')->name('welcome');
 });
 
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+
+Route::resource('/', FrontendController::class);
+Route::get('/', [FrontendController::class, 'index'])->name('frontend.index');
+Route::get('/about', [FrontendController::class, 'about'])->name('frontend.about');
+Route::get('/blog', [FrontendController::class, 'blog'])->name('frontend.blog');
+Route::get('/contact', [FrontendController::class, 'contact'])->name('frontend.contact');
+Route::get('/payment', [FrontendController::class, 'payment'])->name('frontend.payment');
+Route::get('/pricing', [FrontendController::class, 'pricing'])->name('frontend.pricing');
+
+
 
 
 //data tables
@@ -58,3 +73,10 @@ Route::resource('useraccount', UserAccountController::class);
 Route::get('/billing', function () {
     return view('backend.account.billing');
 })->name('billing');
+
+
+
+Route::controller(StripePaymentController::class)->group(function(){
+    Route::get('stripe', 'stripe');
+    Route::post('stripe', 'stripePost')->name('stripe.post');
+});
